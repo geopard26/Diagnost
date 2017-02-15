@@ -8,7 +8,6 @@ class Diagnost(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
 
-
     def setupUi(self, MyForm):
         MyForm.setObjectName("MyForm")
         MyForm.resize(906, 722)
@@ -389,7 +388,6 @@ class Diagnost(QtWidgets.QWidget):
         self.layoutWidget.raise_()
         self.layoutWidget.raise_()
         self.Hard_problems.raise_()
-
         self.retranslateUi(MyForm)
         QtCore.QMetaObject.connectSlotsByName(MyForm)
 
@@ -433,13 +431,10 @@ class Diagnost(QtWidgets.QWidget):
         self.HardProblems_Yes_radioButton.setText(_translate("MyForm", "Да"))
         self.HardProblems_No_radioButton.setText(_translate("MyForm", "Нет"))
 
-    #
     def init_signals(self):
         self.ResultButton.clicked.connect(self.on_click)
         self.SbrosButton.clicked.connect(self.on_clear)
-        #     self.SaveButton.clicked.connect(self.on_clear)
-        # self.srcAmount.valueChanged.connect(self.change_value)
-        # self.resultAmount.valueChanged.connect(self.change_value)
+        self.SaveButton.clicked.connect(self.on_save)
 
     def on_click(self):
         name = self.FIO_line.text()
@@ -555,15 +550,14 @@ class Diagnost(QtWidgets.QWidget):
             + ('\nДиабетичекая ') + str(retinotype) + (' ретинопатия:')
             + ('\nДиабетическая полинейропатия ') + '\n' + str(polyneirotype) + ".\n"
             + str(sds))
-
         self.Result.setPlainText(result)
         self.Result.zoomIn(range=3)
-
         skf_result = str(hbpfor)
         self.SKF_line.setText(skf_result)
         imt_result = str(imt)
         self.IMT_Line.setText(imt_result)
 
+    # Настраиваем кнопу Сброс
     def on_clear(self):
         self.Result.clear()
         self.FIO_line.clear()
@@ -574,12 +568,14 @@ class Diagnost(QtWidgets.QWidget):
         self.Kreatin_line.clear()
         self.SKF_line.clear()
         self.MAU_Line.clear()
+        # Пробуем настоить сброс RadioButton
         # self.Female_radioButton.setCheckable(False)
         #
         # self.Male_radioButton.setCheckable(False)
         # self.Female_radioButton.setCheckable(True)
         # self.Male_radioButton.setCheckable(True)
 
+    # Сохраняем в PDF файл и печатем
     def on_save(self):
         printer = QtPrintSupport.QPrinter()
         printer.setOutputFileName('Диагноз.pdf')
@@ -596,25 +592,10 @@ class Diagnost(QtWidgets.QWidget):
         painter.setFont(font)
         painter.drawText(10, printer.height() // 2 - 100, printer.width() - 20, 50,
                          QtCore.Qt.AlignJustify | QtCore.Qt.TextDontClip, 'Диагноз пациента')
-        # printer.setPageOrientation(QtGui.QPageLayout.Landscape)
-        # printer.newPage()
-        # pixmap = QtGui.QPixmap('img.jpg')
-        # pixmap = pixmap.scaled(printer.width(), printer.height(), aspectRatioMode = QtCore.Qt.KeepAspectRatio)
-        # painter.drawPixmap(0,0,pixmap)
+        # Возможность печатать картинки
+        printer.setPageOrientation(QtGui.QPageLayout.Landscape)
+        printer.newPage()
+        pixmap = QtGui.QPixmap('img.jpg')
+        pixmap = pixmap.scaled(printer.width(), printer.height(), aspectRatioMode=QtCore.Qt.KeepAspectRatio)
+        painter.drawPixmap(0, 0, pixmap)
         painter.end()
-
-
-if __name__ == '__main__':
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    window = Diagnost()
-    window.setWindowTitle('Диагност 1.0')
-    window.setWindowOpacity(0.95)  # Задали небольшую прозрачность главного экрана
-    pal = window.palette()
-    pal.setColor(QtGui.QPalette.Normal, QtGui.QPalette.Window,
-                 QtGui.QColor("#98FF98"))  # задали background-color (Зеленая мята)
-    window.setPalette(pal)
-    window.resize(913, 722)
-    window.show()
-    sys.exit(app.exec_())
